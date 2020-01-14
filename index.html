@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>Greeter</title>
+
+    <!-- Bootstrap -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="container" style="width: 600px;">
+      <div class="row">
+        <div class="col-lg-12 text-center" >
+          <h1 id="greeting">&nbsp;</h1>
+          <div id="content">
+            <form role="form">
+              <div class="form-group" style="display:inline;">
+                <div class="input-group">
+                  <input class="form-control input-lg" name="greeting">
+                  </input>
+                  <span class="input-group-btn">
+                    <button type="submit" class="btn btn-primary btn-block">Set Greeting</button>
+                  </span>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- JQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <!-- Bootstrap -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+    <!-- Web3.js -->
+    <script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js@1.0.0-beta.34/dist/web3.min.js"></script>
+    <script>
+      // Initialize Web3
+      if (typeof web3 !== 'undefined') {
+        web3 = new Web3(web3.currentProvider);
+      } else {
+        web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:7545'));
+      }
+
+      // Set Contract Abi
+      var contractAbi = []; // Add Your Contract ABI here!!!
+
+      // Set Contract Address
+      var contractAddress = ''; // Add Your Contract address here!!!
+
+      // Set the Contract
+      var contract = new web3.eth.Contract(contractAbi, contractAddress);
+
+      // Display the Greeting
+      contract.methods.greet().call(function(err, result) {
+        console.log(err, result)
+        $('#greeting').html(result);
+      });
+
+      // Change the Greeting
+      $('form').on('submit', function(event) {
+        event.preventDefault();
+        greeting = $('input').val();
+        console.log(greeting)
+        web3.eth.getAccounts().then(function(accounts) {
+          contract.methods.setGreeting(greeting).send({ from: accounts[0] });
+        });
+      });
+
+    </script>
+  </body>
+</html>
